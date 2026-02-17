@@ -139,3 +139,25 @@ DECLARE @Name VARCHAR(50);
 EXEC dbo.CheckResultWithName 2,@Staus OUTPUT,@Name OUTPUT;
 SELECT @Name AS StudentName, @Staus AS Result;
 GO
+
+--STORED PROCEDURE WITH TRANSACTION
+CREATE PROCEDURE PayFees
+    @StudentID INT,
+    @Amount INT
+AS
+BEGIN
+    BEGIN TRANSACTION;
+
+    BEGIN TRY
+        UPDATE Students
+        SET Marks = Marks + 1
+        WHERE StudentID = @StudentID;
+
+        COMMIT;
+    END TRY
+    BEGIN CATCH
+        ROLLBACK;
+        PRINT 'Payment Failed';
+    END CATCH
+END;
+
